@@ -1,5 +1,7 @@
 # Auction Site with React and Solidity
 
+![Alt text](./src/assets/images/image.png)
+
 ## Technology
 
 This project uses:
