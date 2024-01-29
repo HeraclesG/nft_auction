@@ -1,11 +1,16 @@
 require('@nomiclabs/hardhat-waffle')
 require('dotenv').config()
 
+const SEPOLIA_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY;
+
+const SCAN_API_KEY_SEPOLIA = process.env.SCAN_API_KEY_SEPOLIA;
+
 module.exports = {
-  defaultNetwork: 'localhost',
   networks: {
-    localhost: {
-      url: 'http://127.0.0.1:8545',
+    sepolia: {
+      chainId: 11155111,
+      url: `https://eth-sepolia.g.alchemy.com/v2/r24vXvM3fi53zBdclFRC79MOyMx7w5k-`, 
+      accounts: [SEPOLIA_PRIVATE_KEY? SEPOLIA_PRIVATE_KEY : ""]
     },
   },
   solidity: {

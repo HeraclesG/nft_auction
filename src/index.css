@@ -15,13 +15,6 @@ body {
 
 .gradient-bg-hero {
   background-color: #151c25;
-  background-image: radial-gradient(
-      at 0% 0%,
-      hsl(302deg 25% 18%) 0,
-      transparent 50%
-    ),
-    radial-gradient(at 50% 0%, hsl(0deg 39% 30%) 0, transparent 50%),
-    radial-gradient(at 100% 0%, hsla(339, 49%, 30%, 1) 0, transparent 50%);
 }
 
 .gradient-bg-artworks {

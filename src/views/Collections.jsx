@@ -5,14 +5,14 @@ import Artworks from '../components/Artworks'
 import { loadCollections } from '../services/blockchain'
 
 const Collections = () => {
-  const [collections] = useGlobalState('collections')
+  const [auctions] = useGlobalState('auctions')
   useEffect(async () => {
     await loadCollections()
   })
   return (
     <div>
-      {collections.length > 0 ? (
-        <Artworks title="Your Collections" auctions={collections} showOffer />
+      {auctions.length > 0 ? (
+        <Artworks title="NFTs for sale" auctions={auctions} />
       ) : (
         <Empty />
       )}

@@ -2,7 +2,6 @@ import abi from '../abis/src/contracts/Auction.sol/Auction.json'
 import address from '../abis/contractAddress.json'
 import { getGlobalState, setGlobalState } from '../store'
 import { ethers } from 'ethers'
-import { checkAuthState, logOutWithCometChat } from './chat'
 
 const { ethereum } = window
 const ContractAddress = address.address
@@ -19,7 +18,6 @@ const getEthereumContract = async () => {
     const provider = new ethers.providers.Web3Provider(ethereum)
     const signer = provider.getSigner()
     const contract = new ethers.Contract(ContractAddress, ContractAbi, signer)
-
     return contract
   } else {
     return getGlobalState('contract')
@@ -40,10 +38,6 @@ const isWallectConnected = async () => {
       setGlobalState('connectedAccount', accounts[0]?.toLowerCase())
       await isWallectConnected()
       await loadCollections()
-      await logOutWithCometChat()
-      await checkAuthState()
-        .then((user) => setGlobalState('currentUser', user))
-        .catch((error) => setGlobalState('currentUser', null))
     })
 
     if (accounts.length) {
@@ -242,7 +236,7 @@ const structuredAuctions = (auctions) =>
       name: auction.name,
       description: auction.description,
       duration: Number(auction.duration + '000'),
-      image: auction.image,
+      image: auction?.image,
       price: fromWei(auction.price),
       biddable: auction.biddable,
       sold: auction.sold,

@@ -18,7 +18,7 @@ contract Auction is ERC721URIStorage, ReentrancyGuard {
     mapping(string => uint) existingURIs;
     mapping(uint => BidderStruct[]) biddersOf;
 
-    constructor(uint _royaltyFee) ERC721("Daltonic Tokens", "DAT") {
+    constructor(uint _royaltyFee) ERC721("Auction Tokens", "AT") {
         companyAcc = msg.sender;
         royalityFee = _royaltyFee;
     }
@@ -366,11 +366,9 @@ contract Auction is ERC721URIStorage, ReentrancyGuard {
         }
     }
 
-    function getBidders(uint tokenId)
-        public
-        view
-        returns (BidderStruct[] memory)
-    {
+    function getBidders(
+        uint tokenId
+    ) public view returns (BidderStruct[] memory) {
         return biddersOf[tokenId];
     }
 

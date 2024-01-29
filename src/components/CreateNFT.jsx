@@ -22,22 +22,25 @@ const CreateNFT = () => {
     formData.append('name', name)
     formData.append('price', price)
     formData.append('description', description)
-    formData.append('image', fileUrl)
+    formData.append('file', fileUrl)
 
     await toast.promise(
       new Promise(async (resolve, reject) => {
-        await axios
-          .post('http://localhost:9000/process', formData)
-          .then(async (res) => {
-            await createNftItem(res.data)
-              .then(async () => {
-                closeModal()
-                resolve()
-              })
-              .catch(() => reject())
-            reject()
-          })
-          .catch(() => reject())
+          await axios.post("https://api.pinata.cloud/pinning/pinFileToIPFS", formData, {
+            maxBodyLength: "Infinity",
+            headers: {
+              Authorization: process.env.REACT_APP_JWT,
+              "Content-Type": `multipart/form-data; boundary=${formData._boundary}`
+            },
+          }).then(async (res) => {
+            await createNftItem({name, description, image:process.env.REACT_APP_PINATA_URL + res.data.IpfsHash, metadataURI:res.data.IpfsHash, price})
+                .then(async () => {
+                  closeModal()
+                  resolve()
+                })
+                .catch(() => reject())
+              reject()
+            })
       }),
       {
         pending: 'Minting & saving data to chain...',

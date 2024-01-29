@@ -90,7 +90,7 @@ const OfferItem = () => {
               <img
                 alt="NFT"
                 className="h-full w-full object-cover cursor-pointer"
-                src={auction?.image}
+                src={auction?.image + "?pinataGatewayToken=" + process.env.REACT_APP_PINATA_GATEWAY_TOKEN}
               />
             </div>
           </div>

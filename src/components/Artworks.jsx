@@ -1,14 +1,15 @@
 import { Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { buyNFTItem } from '../services/blockchain'
-import { setGlobalState } from '../store'
+import { setGlobalState, useGlobalState } from '../store'
 import Countdown from './Countdown'
+import picture0 from '../assets/images/plus.png'
 
 const Artworks = ({ auctions, title, showOffer }) => {
   return (
     <div className="w-4/5 py-10 mx-auto justify-center">
       <p className="text-xl uppercase text-white mb-4">
-        {title ? title : 'Current Bids'}
+        {title ? title : 'NFTs for Sale'}
       </p>
       <div
         className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6
@@ -17,6 +18,7 @@ const Artworks = ({ auctions, title, showOffer }) => {
         {auctions.map((auction, i) => (
           <Auction key={i} auction={auction} showOffer={showOffer} />
         ))}
+        {showOffer ? <AddNFT/> : ''}
       </div>
     </div>
   )
@@ -60,7 +62,7 @@ const Auction = ({ auction, showOffer }) => {
     >
       <Link to={'/nft/' + auction.tokenId}>
         <img
-          src={auction.image}
+          src={auction?.image + "?pinataGatewayToken=" + process.env.REACT_APP_PINATA_GATEWAY_TOKEN} 
           alt={auction.name}
           className="object-cover w-full h-60"
         />
@@ -130,6 +132,26 @@ const Auction = ({ auction, showOffer }) => {
           Buy NFT
         </button>
       )}
+    </div>
+  )
+}
+
+
+const AddNFT = () => {
+  
+  const [boxModal] = useGlobalState('boxModal')
+  
+  const showMintModal = async (e) => {
+    setGlobalState('boxModal', 'scale-5')
+  }
+
+  return (
+    <div
+      className="items-center"
+    >
+      <img src={picture0} alt="nft" className="object-cover w-full items-center cursor-pointer" 
+            onClick={showMintModal}
+      />
     </div>
   )
 }
