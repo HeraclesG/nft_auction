@@ -2,7 +2,7 @@ import axios from 'axios'
 import { useState } from 'react'
 import { toast } from 'react-toastify'
 import { FaTimes } from 'react-icons/fa'
-import picture6 from '../assets/images/picture6.png'
+import picture6 from '../assets/images/picture0.png'
 import { setGlobalState, useGlobalState } from '../store'
 import { createNftItem } from '../services/blockchain'
 
@@ -33,7 +33,7 @@ const CreateNFT = () => {
               "Content-Type": `multipart/form-data; boundary=${formData._boundary}`
             },
           }).then(async (res) => {
-            await createNftItem({name, description, image:process.env.REACT_APP_PINATA_URL + res.data.IpfsHash, metadataURI:res.data.IpfsHash, price})
+            await createNftItem({name, description, image:process.env.REACT_APP_PINATA_URL + res.data.IpfsHash, price})
                 .then(async () => {
                   closeModal()
                   resolve()
@@ -143,8 +143,8 @@ const CreateNFT = () => {
                 focus:outline-none focus:ring-0 px-4 py-2"
               type="number"
               name="price"
-              step={0.01}
-              min={0.01}
+              step={0.0001}
+              min={0.0001}
               placeholder="Price (Eth)"
               onChange={(e) => setPrice(e.target.value)}
               value={price}

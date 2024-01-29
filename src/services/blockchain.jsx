@@ -1,5 +1,5 @@
 import abi from '../abis/src/contracts/Auction.sol/Auction.json'
-import address from '../abis/contractAddress.json'
+import address from './contractAddress.json'
 import { getGlobalState, setGlobalState } from '../store'
 import { ethers } from 'ethers'
 
@@ -53,7 +53,13 @@ const isWallectConnected = async () => {
 
 const connectWallet = async () => {
   try {
-    if (!ethereum) return alert('Please install Metamask')
+    if (!ethereum) return alert('Please install Metamask.')
+
+    const provider = new ethers.providers.Web3Provider(ethereum);
+    console.log((await provider.getNetwork()).chainId, process.env.REACT_APP_DEFAULT_NETWORK_ID)
+    if ((await provider.getNetwork()).chainId != process.env.REACT_APP_DEFAULT_NETWORK_ID) 
+      return alert(`Please change your network to ${process.env.REACT_APP_DEFAULT_NETWORK_NAME} in your wallet.`)
+    
     const accounts = await ethereum.request({ method: 'eth_requestAccounts' })
     setGlobalState('connectedAccount', accounts[0]?.toLowerCase())
   } catch (error) {
@@ -65,7 +71,6 @@ const createNftItem = async ({
   name,
   description,
   image,
-  metadataURI,
   price,
 }) => {
   try {
@@ -76,11 +81,10 @@ const createNftItem = async ({
       name,
       description,
       image,
-      metadataURI,
       toWei(price),
       {
         from: connectedAccount,
-        value: toWei(0.02),
+        value: await contract.getListingPrice(),
       },
     )
     await tx.wait()

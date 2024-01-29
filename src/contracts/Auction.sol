@@ -3,19 +3,17 @@ pragma solidity >=0.7.0 <0.9.0;
 
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-contract Auction is ERC721URIStorage, ReentrancyGuard {
+contract Auction is ERC721, ReentrancyGuard {
     using Counters for Counters.Counter;
     Counters.Counter private totalItems;
 
     address companyAcc;
-    uint listingPrice = 0.02 ether;
+    uint listingPrice = 0.0002 ether;
     uint royalityFee;
     mapping(uint => AuctionStruct) auctionedItem;
     mapping(uint => bool) auctionedItemExist;
-    mapping(string => uint) existingURIs;
     mapping(uint => BidderStruct[]) biddersOf;
 
     constructor(uint _royaltyFee) ERC721("Auction Tokens", "AT") {
@@ -23,14 +21,7 @@ contract Auction is ERC721URIStorage, ReentrancyGuard {
         royalityFee = _royaltyFee;
     }
 
-    struct BidderStruct {
-        address bidder;
-        uint price;
-        uint timestamp;
-        bool refunded;
-        bool won;
-    }
-
+    //Structure for storing NFT and auctions
     struct AuctionStruct {
         string name;
         string description;
@@ -47,6 +38,16 @@ contract Auction is ERC721URIStorage, ReentrancyGuard {
         uint duration;
     }
 
+    //Structure for storing bidders of auctions
+    struct BidderStruct {
+        address bidder;
+        uint price;
+        uint timestamp;
+        bool refunded;
+        bool won;
+    }
+
+    //Emmited when one auction item is created
     event AuctionItemCreated(
         uint indexed tokenId,
         address seller,
@@ -55,15 +56,20 @@ contract Auction is ERC721URIStorage, ReentrancyGuard {
         bool sold
     );
 
+    //Enquires minimum price for minting & listing NFTs
     function getListingPrice() public view returns (uint) {
         return listingPrice;
     }
 
+    ////Sets minimum price to mint & list NFTs
     function setListingPrice(uint _price) public {
         require(msg.sender == companyAcc, "Unauthorized entity");
         listingPrice = _price;
     }
 
+    //Changes the default minimum price to buy an NFT
+    //Only the owner of NFT can change the price
+    //Cannot be changed while auction period
     function changePrice(uint tokenId, uint price) public {
         require(
             auctionedItem[tokenId].owner == msg.sender,
@@ -78,21 +84,21 @@ contract Auction is ERC721URIStorage, ReentrancyGuard {
         auctionedItem[tokenId].price = price;
     }
 
-    function mintToken(string memory tokenURI) internal returns (bool) {
+    //Typical mint function for ERC-721 NFT
+    function mintToken() internal returns (bool) {
         totalItems.increment();
         uint tokenId = totalItems.current();
 
         _mint(msg.sender, tokenId);
-        _setTokenURI(tokenId, tokenURI);
 
         return true;
     }
 
+    //Creates an NFT, register it to the Auction storage and pay the listing price to the administrator
     function createAuction(
         string memory name,
         string memory description,
         string memory image,
-        string memory tokenURI,
         uint price
     ) public payable nonReentrant {
         require(price > 0 ether, "Sales price must be greater than 0 ethers.");
@@ -100,7 +106,7 @@ contract Auction is ERC721URIStorage, ReentrancyGuard {
             msg.value >= listingPrice,
             "Price must be up to the listing price."
         );
-        require(mintToken(tokenURI), "Could not mint token");
+        require(mintToken(), "Could not mint token");
 
         uint tokenId = totalItems.current();
 
@@ -122,6 +128,7 @@ contract Auction is ERC721URIStorage, ReentrancyGuard {
         emit AuctionItemCreated(tokenId, msg.sender, address(0), price, false);
     }
 
+    //Make NFT live onto the auction marketplace
     function offerAuction(
         uint tokenId,
         bool biddable,
@@ -155,6 +162,7 @@ contract Auction is ERC721URIStorage, ReentrancyGuard {
         auctionedItem[tokenId].duration = getTimestamp(sec, min, hour, day);
     }
 
+    //Places a bid to an NFT in auction
     function placeBid(uint tokenId) public payable {
         require(
             msg.value >= auctionedItem[tokenId].price,
@@ -177,6 +185,8 @@ contract Auction is ERC721URIStorage, ReentrancyGuard {
         auctionedItem[tokenId].winner = msg.sender;
     }
 
+    //Auction Winners can claim prizes after the auction
+    //Pays royality fee to the original minter
     function claimPrize(uint tokenId, uint bid) public {
         require(
             getTimestamp(0, 0, 0, 0) > auctionedItem[tokenId].duration,
@@ -206,6 +216,7 @@ contract Auction is ERC721URIStorage, ReentrancyGuard {
         performRefund(tokenId);
     }
 
+    //Refunds all funds staked into the platform to the lost bidders
     function performRefund(uint tokenId) internal {
         for (uint i = 0; i < biddersOf[tokenId].length; i++) {
             if (biddersOf[tokenId][i].bidder != msg.sender) {
@@ -223,6 +234,7 @@ contract Auction is ERC721URIStorage, ReentrancyGuard {
         delete biddersOf[tokenId];
     }
 
+    //Directly buys auction item from the owner
     function buyAuctionedItem(uint tokenId) public payable nonReentrant {
         require(
             msg.value >= auctionedItem[tokenId].price,
@@ -252,48 +264,13 @@ contract Auction is ERC721URIStorage, ReentrancyGuard {
         auctionedItem[tokenId].owner = msg.sender;
     }
 
+    //Retrieves specific auction with id
     function getAuction(uint id) public view returns (AuctionStruct memory) {
         require(auctionedItemExist[id], "Auctioned Item not found");
         return auctionedItem[id];
     }
 
-    function getAllAuctions()
-        public
-        view
-        returns (AuctionStruct[] memory Auctions)
-    {
-        uint totalItemsCount = totalItems.current();
-        Auctions = new AuctionStruct[](totalItemsCount);
-
-        for (uint i = 0; i < totalItemsCount; i++) {
-            Auctions[i] = auctionedItem[i + 1];
-        }
-    }
-
-    function getUnsoldAuction()
-        public
-        view
-        returns (AuctionStruct[] memory Auctions)
-    {
-        uint totalItemsCount = totalItems.current();
-        uint totalSpace;
-        for (uint i = 0; i < totalItemsCount; i++) {
-            if (!auctionedItem[i + 1].sold) {
-                totalSpace++;
-            }
-        }
-
-        Auctions = new AuctionStruct[](totalSpace);
-
-        uint index;
-        for (uint i = 0; i < totalItemsCount; i++) {
-            if (!auctionedItem[i + 1].sold) {
-                Auctions[index] = auctionedItem[i + 1];
-                index++;
-            }
-        }
-    }
-
+    //Retrieves all NFTs one owns
     function getMyAuctions()
         public
         view
@@ -318,30 +295,7 @@ contract Auction is ERC721URIStorage, ReentrancyGuard {
         }
     }
 
-    function getSoldAuction()
-        public
-        view
-        returns (AuctionStruct[] memory Auctions)
-    {
-        uint totalItemsCount = totalItems.current();
-        uint totalSpace;
-        for (uint i = 0; i < totalItemsCount; i++) {
-            if (auctionedItem[i + 1].sold) {
-                totalSpace++;
-            }
-        }
-
-        Auctions = new AuctionStruct[](totalSpace);
-
-        uint index;
-        for (uint i = 0; i < totalItemsCount; i++) {
-            if (auctionedItem[i + 1].sold) {
-                Auctions[index] = auctionedItem[i + 1];
-                index++;
-            }
-        }
-    }
-
+    //Retrieves all auctions available in the market
     function getLiveAuctions()
         public
         view
@@ -366,6 +320,7 @@ contract Auction is ERC721URIStorage, ReentrancyGuard {
         }
     }
 
+    //Gets list of bidders of one auction
     function getBidders(
         uint tokenId
     ) public view returns (BidderStruct[] memory) {

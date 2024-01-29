@@ -4,7 +4,7 @@ import picture0 from '../assets/images/picture0.png'
 import { setGlobalState, useGlobalState } from '../store'
 const Hero = () => {
   return (
-    <div className="flex flex-col items-start md:flex-row w-3/5 mx-auto mt-11 justify-center ">
+    <div className="flex flex-col items-start w-3/5 md:flex-row mx-auto mt-11 justify-center ">
       <Banner/>
       <Bidder/>
     </div>

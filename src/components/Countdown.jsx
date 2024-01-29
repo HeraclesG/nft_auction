@@ -19,7 +19,7 @@ const Countdown = ({ timestamp }) => {
   const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000)
 
   return Date.now() > timestamp ? (
-    'Closed'
+    ''
   ) : (
     <span >
       <span className="font-bold text-lg">Time Left: </span>

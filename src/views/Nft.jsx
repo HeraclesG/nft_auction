@@ -40,7 +40,7 @@ const Nft = () => {
           />
           <ActionButton auction={auction} account={connectedAccount} />
         </div>
-        <div className="text-white h-[400px] rounded-md shadow-black md:w-4/5 lg:w-4/5 md:mt-0 gap-3 flex flex-col">
+        <div className="text-white h-[400px] rounded-md shadow-black md:w-4/5 lg:w-4/5 md:mt-0 flex flex-col pt-10">
           <Details auction={auction} account={connectedAccount} />
           
           <CountdownNPrice auction={auction} />
@@ -175,7 +175,7 @@ const ActionButton = ({ auction, account }) => {
           type="button"
           className="shadow-sm shadow-black text-white
           bg-green-500 hover:bg-green-700 md:text-xs p-2.5 w-full
-          rounded-sm cursor-pointer font-light"
+          rounded-sm cursor-pointer font-light mt-2"
           onClick={onPlaceBid}
         >
           Place a Bid
