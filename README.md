@@ -1,76 +1,48 @@
-# How to Build an NFT Auction Site with React, Solidity, and CometChat
-
-Read the full tutorial here: [**>> How to Build an NFT Auction Site with React, Solidity, and CometChat**](https://daltonic.github.io)
-
-This example shows How to Build an NFT Auction Site with React, Solidity, and CometChat:
-
-![Offering Item](./screenshots/0.gif)
-
-<center><figcaption>NFT Auction Marketplace: Offerings</figcaption></center>
-
-![Bidding Item](./screenshots/1.gif)
-
-<center><figcaption>NFT Auction Marketplace: Biddings</figcaption></center>
+# Auction Site with React and Solidity
 
 ## Technology
 
-This demo uses:
+This project uses:
 
 - Metamask
 - Hardhat
-- Infuria
+- Pinata
 - ReactJs
 - Tailwind CSS
 - Solidity
 - EthersJs
 - Faucet
 
-## Running the demo
+## Running the project
 
-To run the demo follow these steps:
+To run the project follow these steps:
 
 1. Clone the project with the code below.
 
    ```sh
-
-   # Make sure you have the above prerequisites installed already!
-   git clone https://github.com/Daltonic/dappAuction
+   git clone https://github.com/breavedev/nft_auction
    cd dappAution # Navigate to the new folder.
    yarn install # Installs all the dependencies.
    ```
-2. Head to [infuria](https://app.infura.io/dashboard) and create an IPFS project.
 
-3. Create another `.env` file in the api directory and enter the following details.
+2. Head to [Pinata](https://app.pinata.cloud/) and set up an account.
+
+3. Create `.env` file and enter the following details.
+
    ```sh
-   INFURIA_PID=<PROJECT_ID>
-   INFURIA_API=PROJECT_API_SECRET>
+   WALLET_PRIVATE_KEY=<YOUR_WALLET_PRIVATE_KEY>
+
+   REACT_APP_PINATA_URL = <PINATA_DOMAIN_ADDRESS>
+   REACT_APP_PINATA_GATEWAY_TOKEN = <PINATA_GATEWAY_KEY>
+   REACT_APP_JWT = <PINATA_JWT_TOKEN>
+   REACT_APP_DEFAULT_NETWORK_ID = 123
+   REACT_APP_DEFAULT_NETWORK_NAME = 'Fuse Sparknet'
    ```
 
-2. Head to [CometChat](https://try.cometchat.com/daltonic) and create a project.
+4. Add Fuse Sparknet to your wallet using [Chainlist](https://chainlist.org/).
 
-3. Update `.env` file to include the following details.
-   ```sh
-   REACT_APP_COMETCHAT_APP_ID=<APP_ID>
-   REACT_APP_COMETCHAT_AUTH_KEY=<AUTH_KEY>
-   REACT_APP_COMETCHAT_REGION=<REGION>
-   ```
-4. On one terminal `CD` into the `api` directory and run `node app.js`
+5. Get some faucet from [ChainDrop](https://chaindrop.org/?chainid=123&token=0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee).
 
-5. On a second terminal, run `yarn start` to spin up the app on the browser.
-   <br/>
+6. Open a terminal and run `npx hardhat run ./scripts/deploy.js --network fuse_sparknet` to deploy the auction contract.
 
-If your confuse about the installation, check out this **TUTORIAL** to see how you should run it.
-
-Questions about running the demo? [Open an issue](https://github.com/Daltonic/dappAution/issues). We're here to help ✌️
-
-## Useful links
-
-- 🏠 [Website](https://daltonic.github.io/)
-- ⚽ [Metamask](https://metamask.io/)
-- 🚀 [Remix Editor](https://remix.ethereum.org/)
-- 💡 [Hardhat](https://hardhat.org/)
-- ✨ [Infuria](https://infura.io/)
-- 🔥 [ReactJs](https://reactjs.org/)
-- 🐻 [Solidity](https://soliditylang.org/)
-- 👀 [Ethersjs](https://docs.ethers.io/v5/)
-- 🎅 [CometChat](https://try.cometchat.com/daltonic)
+7. Run `npm start` to spin up the app on the browser.

@@ -9,7 +9,7 @@ const Artworks = ({ auctions, title, showOffer }) => {
   return (
     <div className="w-4/5 py-10 mx-auto justify-center">
       <p className="text-xl uppercase text-white mb-4">
-        {title ? title : 'NFTs for Sale'}
+        {title}
       </p>
       <div
         className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6
@@ -25,6 +25,8 @@ const Artworks = ({ auctions, title, showOffer }) => {
 }
 
 const Auction = ({ auction, showOffer }) => {
+  const [connectedAccount] = useGlobalState('connectedAccount')
+
   const onOffer = () => {
     setGlobalState('auction', auction)
     setGlobalState('offerModal', 'scale-100')
@@ -114,14 +116,17 @@ const Auction = ({ auction, showOffer }) => {
           </div>
         )
       ) : auction.biddable ? (
-        <button
-          className="bg-green-500 w-full h-[40px] p-2 text-center
-          font-bold font-mono"
-          onClick={onPlaceBid}
-          disabled={Date.now() > auction.duration}
-        >
-          Place a Bid
-        </button>
+        <div>
+          {auction.owner == connectedAccount ? <div
+              className="bg-green-700 w-full h-[40px] p-2 text-center font-bold font-mono"
+              disabled={Date.now() > auction.duration}>Owned</div>
+              :
+            <button
+              className="bg-green-500 w-full h-[40px] p-2 text-center font-bold font-mono"
+              onClick={onPlaceBid}
+              disabled={Date.now() > auction.duration}>Place a Bid</button>
+          }
+        </div>
       ) : (
         <button
           className="bg-red-500 w-full h-[40px] p-2 text-center

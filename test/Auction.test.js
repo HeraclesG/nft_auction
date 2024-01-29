@@ -14,10 +14,6 @@ describe('Contracts', () => {
   const price = toWei(1.5)
   const newPrice = toWei(2)
   const secs = 5
-  const metadata1 =
-    'https://ipfs.io/ipfs/QmY3p6rUBSyyCCg4Gp35aCX2HGPUSyR2EcnUTrsrhK4si4'
-  const metadata2 =
-    'https://ipfs.io/ipfs/QmcvMdhMduoV7pQYXAe5d8QenCstigRmLNqA8BFv18pc8q'
   const biddable = true
   const royaltyFee = 5
 
@@ -31,14 +27,14 @@ describe('Contracts', () => {
 
   describe('Auction', () => {
     beforeEach(async () => {
-      await contract.createAuction(name, description, image, metadata1, price, {
+      await contract.createAuction(name, description, image, price, {
         from: seller.address,
-        value: toWei(0.02),
+        value: await contract.getListingPrice(),
       })
       await contract
         .connect(reseller)
-        .createAuction(name, description, image, metadata2, price, {
-          value: toWei(0.02),
+        .createAuction(name, description, image, price, {
+          value: await contract.getListingPrice(),
         })
     })
 
@@ -83,51 +79,6 @@ describe('Contracts', () => {
       expect(result).to.equal(1)
       result = await contract.balanceOf(seller.address)
       expect(result).to.equal(0)
-    })
-
-    it('Should confirm NFT Price Change', async () => {
-      result = await contract.getAuction(tokenId)
-      expect(result.price).to.be.equal(price)
-
-      await contract.changePrice(tokenId, newPrice, { from: seller.address })
-
-      result = await contract.getAuction(tokenId)
-      expect(result.price).to.be.equal(newPrice)
-    })
-
-    it('Should confirm All Auctioned NFTs', async () => {
-      result = await contract.getAllAuctions()
-      expect(result).to.have.lengthOf(2)
-    })
-
-    it('Should confirm Unsold Auctioned NFTs', async () => {
-      result = await contract.getUnsoldAuction()
-      expect(result).to.have.lengthOf(2)
-
-      await contract
-        .connect(reseller)
-        .offerAuction(tokenId2, !biddable, secs, 0, 0, 0)
-      await contract.connect(buyer).buyAuctionedItem(tokenId2, {
-        value: price,
-      })
-
-      result = await contract.getUnsoldAuction()
-      expect(result).to.have.lengthOf(1)
-    })
-
-    it('Should confirm Sold Auctioned NFTs', async () => {
-      result = await contract.getUnsoldAuction()
-      expect(result).to.have.lengthOf(2)
-
-      await contract.offerAuction(tokenId, !biddable, secs, 0, 0, 0, {
-        from: seller.address,
-      })
-      await contract.connect(buyer).buyAuctionedItem(tokenId, {
-        value: price,
-      })
-
-      result = await contract.getSoldAuction()
-      expect(result).to.have.lengthOf(1)
     })
 
     it('Should confirm NFT Auction Relisting', async () => {

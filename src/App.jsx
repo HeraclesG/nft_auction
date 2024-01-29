@@ -1,7 +1,6 @@
 import Nft from './views/Nft'
 import Home from './views/Home'
 import Header from './components/Header'
-import Footer from './components/Footer'
 import { useEffect, useState } from 'react'
 import PlaceBid from './components/PlaceBid'
 import Collections from './views/Collections'
@@ -17,6 +16,7 @@ import ChangePrice from './components/ChangePrice'
 function App() {
   const [loaded, setLoaded] = useState(false)
   const [auction] = useGlobalState('auction')
+
   useEffect(async () => {
     await isWallectConnected()
     await loadAuctions().finally(() => setLoaded(true))
