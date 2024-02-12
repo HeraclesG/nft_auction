@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import PlaceBid from './components/PlaceBid'
 import Collections from './views/Collections'
 import MyCollections from './views/MyCollections'
-import CreateNFT from './components/CreateNFT'
+import Claimables from './views/Claimables'
 import { ToastContainer } from 'react-toastify'
 import { Route, Routes } from 'react-router-dom'
 import { isWallectConnected, loadAuctions } from './services/blockchain'
@@ -34,6 +34,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/collections" element={<Collections />} />
           <Route path="/mycollections" element={<MyCollections />} />
+          <Route path="/claimables" element={<Claimables />} />
           <Route path="/nft/:id" element={<Nft />} />
         </Routes>
       ) : null}

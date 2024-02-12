@@ -1,4 +1,5 @@
 require('@nomiclabs/hardhat-waffle')
+require("@nomicfoundation/hardhat-verify");
 require('dotenv').config()
 
 const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY;

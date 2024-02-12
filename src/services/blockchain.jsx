@@ -62,6 +62,8 @@ const connectWallet = async () => {
     
     const accounts = await ethereum.request({ method: 'eth_requestAccounts' })
     setGlobalState('connectedAccount', accounts[0]?.toLowerCase())
+    loadAuctions();
+    loadCollections();
   } catch (error) {
     reportError(error)
   }
@@ -230,6 +232,19 @@ const loadCollections = async () => {
   }
 }
 
+
+const loadClaimables = async () => {
+  try {
+    if (!ethereum) return alert('Please install Metamask')
+    const connectedAccount = getGlobalState('connectedAccount')
+    const contract = await getEthereumContract()
+    const claimables = await contract.getClaimableAuctions({ from: connectedAccount })
+    setGlobalState('claimables', structuredAuctions(claimables))
+  } catch (error) {
+    reportError(error)
+  }
+}
+
 const structuredAuctions = (auctions) =>
   auctions
     .map((auction) => ({
@@ -269,6 +284,7 @@ export {
   connectWallet,
   createNftItem,
   loadAuctions,
+  loadClaimables,
   loadAuction,
   loadCollections,
   offerItemOnMarket,
