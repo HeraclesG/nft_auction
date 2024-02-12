@@ -16,6 +16,7 @@ const Header = () => {
       items-center flex-initial'>
             <Link to="/mycollections">My NFTs</Link>
             <Link to="/collections">Marketplace</Link>
+            <Link to="/claimables">Claimables</Link>
       </ul>
       {connectedAccount ? (
         <button

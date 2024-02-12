@@ -320,6 +320,31 @@ contract Auction is ERC721, ReentrancyGuard {
         }
     }
 
+    //Retrieves all claimable auctions available in the market
+    function getClaimableAuctions()
+        public
+        view
+        returns (AuctionStruct[] memory Auctions)
+    {
+        uint totalItemsCount = totalItems.current();
+        uint totalSpace;
+        for (uint i = 0; i < totalItemsCount; i++) {
+            if (auctionedItem[i + 1].duration <= getTimestamp(0, 0, 0, 0) && auctionedItem[i + 1].winner == msg.sender) {
+                totalSpace++;
+            }
+        }
+
+        Auctions = new AuctionStruct[](totalSpace);
+
+        uint index;
+        for (uint i = 0; i < totalItemsCount; i++) {
+            if (auctionedItem[i + 1].duration <= getTimestamp(0, 0, 0, 0) && auctionedItem[i + 1].winner == msg.sender) {
+                Auctions[index] = auctionedItem[i + 1];
+                index++;
+            }
+        }
+    }
+
     //Gets list of bidders of one auction
     function getBidders(
         uint tokenId
